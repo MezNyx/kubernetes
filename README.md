@@ -1,13 +1,13 @@
-### Typical Install For Helm to Kustomize
+## Typical Install For Helm to Kustomize
 
 
-## Install Helm 3
+### Install Helm 3
 
 helm url: [helm.sh](https://helm.sh)
 helm github url: [helm releases](https://github.com/helm/helm/releases)
 
 
-## Create Kustomized Deployment
+### Create Kustomized Deployment
 
 - Fetch the helm chart: `helm fetch --untar --untardir charts hashicorp/vault`
 - Fetch the values: `helm show values hashicorp/vault > values.yaml`
