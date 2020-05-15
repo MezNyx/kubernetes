@@ -3,8 +3,8 @@
 
 ### Install Helm 3
 
-helm url: [helm.sh](https://helm.sh)
-helm github url: [helm releases](https://github.com/helm/helm/releases)
+- helm url: [helm.sh](https://helm.sh)
+- helm github url: [helm releases](https://github.com/helm/helm/releases)
 
 
 ### Create Kustomized Deployment
