@@ -1,0 +1,16 @@
+namespace: "vault"
+resources:
+  - volumes.yaml
+  - injector-clusterrolebinding.yaml
+  - injector-clusterrole.yaml
+  - injector-deployment.yaml
+  - injector-mutating-webhook.yaml
+  - injector-serviceaccount.yaml
+  - injector-service.yaml
+  - namespace.yaml
+  - server-clusterrolebinding.yaml
+  - server-config-configmap.yaml
+  - server-headless-service.yaml
+  - server-serviceaccount.yaml
+  - server-service.yaml
+  - server-statefulset.yaml
