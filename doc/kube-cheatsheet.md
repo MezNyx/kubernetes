@@ -18,10 +18,10 @@ kubeadm token create --print-join-command
 
 ### Port Forwarding
 ```Shell
-kubectl port-forward service/$servicename --namespace $namespace $local_port:$remote_port
+kubectl port-forward service/${servicename} --namespace ${namespace} ${local_port}:${remote_port}
 ```
 
 ### Quickly help troubleshoot pod issues
 ```Shell
-kubectl describe pod $pod_name | grep -A 3 Events
+kubectl describe pod ${pod} | grep -A 3 Events
 ```
