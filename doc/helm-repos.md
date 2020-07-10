@@ -8,4 +8,5 @@
 ```bash
 $ helm repo add stable https://kubernetes-charts.storage.googleapis.com
 $ helm repo add hashicorp https://helm.releases.hashicorp.com
+$ helm repo add loki https://grafana.github.io/loki/charts
 ```
