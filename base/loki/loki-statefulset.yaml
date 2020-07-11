@@ -71,7 +71,6 @@ spec:
             {}
           securityContext:
             readOnlyRootFilesystem: true
-          env:
       nodeSelector:
         {}
       affinity:
