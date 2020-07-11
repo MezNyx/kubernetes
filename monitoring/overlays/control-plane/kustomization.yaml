@@ -4,9 +4,6 @@ kind: Kustomization
 bases:
 - ../../../base/kube-prometheus
 
-commonLabels:
-  roles: monitoring
-
 secretGenerator:
 - name: grafana-datasources
   behavior: replace
