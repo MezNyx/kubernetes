@@ -13,3 +13,6 @@ secretGenerator:
 
 generatorOptions:
   disableNameSuffixHash: true
+
+patchesStrategicMerge:
+- ./grafana/grafana-service-patch.yaml
