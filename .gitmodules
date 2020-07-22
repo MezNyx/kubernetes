@@ -1,3 +1,0 @@
-[submodule "base/kube-prometheus"]
-	path = base/kube-prometheus
-	url = https://github.com/coreos/kube-prometheus.git
