@@ -348,18 +348,34 @@ notifiers: {}
 ##
 ## `path` must be /var/lib/grafana/dashboards/<provider_name>
 ##
-dashboardProviders: {}
-#  dashboardproviders.yaml:
-#    apiVersion: 1
-#    providers:
-#    - name: 'default'
-#      orgId: 1
-#      folder: ''
-#      type: file
-#      disableDeletion: false
-#      editable: true
-#      options:
-#        path: /var/lib/grafana/dashboards/default
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'compute-resources'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/compute-resources
+    - name: 'networking'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/networking
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
 
 ## Configure grafana dashboard to import
 ## NOTE: To use dashboards you must also enable/configure dashboardProviders
@@ -367,22 +383,56 @@ dashboardProviders: {}
 ##
 ## dashboards per provider, use provider name as key.
 ##
-dashboards: {}
-  # default:
-  #   some-dashboard:
-  #     json: |
-  #       $RAW_JSON
-  #   custom-dashboard:
-  #     file: dashboards/custom-dashboard.json
-  #   prometheus-stats:
-  #     gnetId: 2
-  #     revision: 2
-  #     datasource: Prometheus
-  #   local-dashboard:
-  #     url: https://example.com/repository/test.json
-  #   local-dashboard-base64:
-  #     url: https://example.com/repository/test-b64.json
-  #     b64content: true
+dashboards:
+  compute-resources:
+    kube_compute_resources_cluster_pods:
+      file: dashboards/kube_compute_resources_cluster_pods.json
+    kube_compute_resources_namespace_pods:
+      file: dashboards/kube_compute_resources_namespace_pods.json
+    kube_compute_resources_namespace_workloads:
+      file: dashboards/kube_compute_resources_namespace_workloads.json
+    kube_compute_resources_node_pods:
+      file: dashboards/kube_compute_resources_node_pods.json
+    kube_compute_resources_pod:
+      file: dashboards/kube_compute_resources_pod.json
+    kube_compute_resources_workload:
+      file: dashboards/kube_compute_resources_workload.json
+  networking:
+    kube_networking_cluster:
+      file: dashboards/kube_networking_cluster.json
+    kube_networking_namespace_pods:
+      file: dashboards/kube_networking_namespace_pods.json
+    kube_networking_namespace_workload:
+      file: dashboards/kube_networking_namespace_workload.json
+    kube_networking_pod:
+      file: dashboards/kube_networking_pod.json
+    kube_networking_workload:
+      file: dashboards/kube_networking_workload.json
+  default:
+    kube_api_server:
+      file: dashboards/kube_api_server.json
+    kube_controller_manager:
+      file: dashboards/kube_controller_manager.json
+    kube_kubelet:
+      file: dashboards/kube_kubelet.json
+    kube_persistent_volumes:
+      file: dashboards/kube_persistent_volumes.json
+    kube_proxy:
+      file: dashboards/kube_proxy.json
+    kube_scheduler:
+      file: dashboards/kube_scheduler.json
+    kube_statefulsets:
+      file: dashboards/kube_statefulsets.json
+    nodes:
+      file: dashboards/nodes.json
+    prometheus_overview:
+      file: dashboards/prometheus_overview.json
+    prometheus_remote_write:
+      file: dashboards/prometheus_remote_write.json
+    USE_method_cluster:
+      file: dashboards/USE_method_cluster.json
+    USE_method_node:
+      file: dashboards/USE_method_node.json
 
 ## Reference to external ConfigMap per provider. Use provider name as key and ConfiMap name as value.
 ## A provider dashboards must be defined either by external ConfigMaps or in values.yaml, not in both.
