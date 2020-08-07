@@ -29,7 +29,7 @@ commonLabels: {}
 defaultRules:
   create: true
   rules:
-    alertmanager: true
+    alertmanager: false
     etcd: true
     general: true
     k8s: true
@@ -102,7 +102,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  enabled: true
+  enabled: false
 
   ## Api that prometheus will use to communicate with alertmanager. Possible values are v1, v2
   ##
