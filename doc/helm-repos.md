@@ -3,6 +3,8 @@
 - incubator	https://kubernetes-charts-incubator.storage.googleapis.com
 - vm       	https://victoriametrics.github.io/helm-charts             
 - hashicorp	https://helm.releases.hashicorp.com 
+- percona	https://percona.github.io/percona-helm-charts
+- loki		https://grafana.github.io/loki/charts 
 
 ### Install
 ```bash
