@@ -1,3 +1,0 @@
-[submodule "helm/cortex"]
-	path = helm/cortex
-	url = https://github.com/cortexproject/cortex-helm-chart
