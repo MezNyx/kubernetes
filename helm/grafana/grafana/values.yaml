@@ -390,10 +390,10 @@ grafana:
       apiVersion: 1
       datasources:
       - name: Loki
-	type: loki
-	url: http://loki.monitoring.svc.cluster.local:3100
-	access: proxy
-	isDefault: true
+        type: loki
+        url: http://loki.monitoring.svc.cluster.local:3100
+        access: proxy
+        isDefault: true
 
   ## Configure notifiers
   ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
@@ -483,7 +483,7 @@ grafana:
       url: https://grafana.net
   ## grafana Authentication can be enabled with the following values on grafana.ini
    # server:
-	# The full public facing url you use in browser, used for redirects and emails
+        # The full public facing url you use in browser, used for redirects and emails
    #    root_url:
    # https://grafana.com/docs/grafana/latest/auth/github/#enable-github-in-grafana
    # auth.github:
@@ -573,20 +573,20 @@ grafana:
       folderAnnotation: null
       # provider configuration that lets grafana manage the dashboards
       provider:
-	# name of the provider, should be unique
-	name: sidecarProvider
-	# orgid as configured in grafana
-	orgid: 1
-	# folder in which the dashboards should be imported in grafana
-	folder: ''
-	# type of the provider
-	type: file
-	# disableDelete to activate a import-only behaviour
-	disableDelete: false
-	# allow updating provisioned dashboards from the UI
-	allowUiUpdates: false
-	# allow Grafana to replicate dashboard structure from filesystem
-	foldersFromFilesStructure: false
+    # name of the provider, should be unique
+    name: sidecarProvider
+    # orgid as configured in grafana
+    orgid: 1
+    # folder in which the dashboards should be imported in grafana
+    folder: ''
+    # type of the provider
+    type: file
+    # disableDelete to activate a import-only behaviour
+    disableDelete: false
+    # allow updating provisioned dashboards from the UI
+    allowUiUpdates: false
+    # allow Grafana to replicate dashboard structure from filesystem
+    foldersFromFilesStructure: false
     datasources:
       enabled: false
       # label that the configmaps with datasources are marked with
