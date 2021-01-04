@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: fluent-bit
+  name: promtail
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -15,7 +15,7 @@ spec:
       releaseName: k8s
       valueFiles:
         - values.yaml
-    path: helm/fluent-bit
+    path: helm/promtail
     repoURL: https://github.com/meznyx/kubernetes.git
     targetRevision: main
   syncPolicy:
