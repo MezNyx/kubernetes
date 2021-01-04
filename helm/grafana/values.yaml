@@ -392,7 +392,7 @@ grafana:
       datasources:
       - name: Loki
         type: loki
-        url: http://loki.monitoring.svc.cluster.local:3100
+        url: http://k8s-loki.monitoring.svc.cluster.local:3100
         access: proxy
         isDefault: true
 
