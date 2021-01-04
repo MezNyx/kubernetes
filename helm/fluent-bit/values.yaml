@@ -166,7 +166,7 @@ fluent-bit:
       [OUTPUT]
           Name loki
           Match kube.*
-          Host loki.monitoring.svc.cluster.local
+          Host k8s-loki.monitoring.svc.cluster.local
           Port 3100
           Auto_Kubernetes_Labels true
 
