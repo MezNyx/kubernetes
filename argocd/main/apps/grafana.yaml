@@ -15,7 +15,7 @@ spec:
       releaseName: k8s
       valueFiles:
         - values.yaml
-    path: helm/grafana/grafana
+    path: helm/grafana
     repoURL: https://github.com/meznyx/kubernetes.git
     targetRevision: main
   syncPolicy:

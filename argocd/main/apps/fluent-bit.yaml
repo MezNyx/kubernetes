@@ -15,7 +15,7 @@ spec:
       releaseName: k8s
       valueFiles:
         - values.yaml
-    path: helm/fluent/fluent-bit
+    path: helm/fluent-bit
     repoURL: https://github.com/meznyx/kubernetes.git
     targetRevision: main
   syncPolicy:
