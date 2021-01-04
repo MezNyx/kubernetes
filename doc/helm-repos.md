@@ -1,13 +1,13 @@
 ## Useful Helm Repositories
 
-NAME     	URL                                                       
-stable   	https://kubernetes-charts.storage.googleapis.com          
-incubator	https://kubernetes-charts-incubator.storage.googleapis.com
-vm       	https://victoriametrics.github.io/helm-charts             
-hashicorp	https://helm.releases.hashicorp.com                       
-loki     	https://grafana.github.io/loki/charts                     
-fluent   	https://fluent.github.io/helm-charts                      
-grafana  	https://grafana.github.io/helm-charts  
+NAME     	URL                                  
+hashicorp	https://helm.releases.hashicorp.com  
+fluent   	https://fluent.github.io/helm-charts 
+grafana  	https://grafana.github.io/helm-charts
+stable   	https://charts.helm.sh/stable        
+incubator	https://charts.helm.sh/incubator     
+bitnami  	https://charts.bitnami.com/bitnami   
+argo     	https://argoproj.github.io/argo-helm 
 
 ### Install
 
