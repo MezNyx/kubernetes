@@ -340,14 +340,14 @@ alertmanager:
 
     bearerTokenFile:
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -460,11 +460,11 @@ alertmanager:
     #   selector: {}
 
 
-    ## 	The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name.	string	false
+    ##  The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name.   string  false
     ##
     externalUrl:
 
-    ## 	The route prefix Alertmanager registers HTTP handlers for. This is useful, if using ExternalURL and a proxy is rewriting HTTP routes of a request, and the actual ExternalURL is still true,
+    ##  The route prefix Alertmanager registers HTTP handlers for. This is useful, if using ExternalURL and a proxy is rewriting HTTP routes of a request, and the actual ExternalURL is still true,
     ## but the server serves requests under a different route prefix. For example for use with kubectl proxy.
     ##
     routePrefix: /
@@ -521,7 +521,7 @@ alertmanager:
     #   effect: "NoSchedule"
 
     ## SecurityContext holds pod-level security attributes and common container settings.
-    ## This defaults to non root user with uid 1000 and gid 2000.	*v1.PodSecurityContext	false
+    ## This defaults to non root user with uid 1000 and gid 2000.   *v1.PodSecurityContext  false
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
     ##
     securityContext:
@@ -678,14 +678,14 @@ grafana:
     # in grafana.ini
     path: "/metrics"
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -725,7 +725,7 @@ kubeApiServer:
         component: apiserver
         provider: kubernetes
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
@@ -790,7 +790,7 @@ kubelet:
     #   replacement: $1
     #   action: drop
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     #   metrics_path is required to match upstream rules and charts
     ##
     cAdvisorRelabelings:
@@ -835,7 +835,7 @@ kubelet:
     #   replacement: $1
     #   action: drop
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     #   metrics_path is required to match upstream rules and charts
     ##
     relabelings:
@@ -884,14 +884,14 @@ kubeControllerManager:
     # Name of the server to use when validating TLS certificate
     serverName: null
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -915,14 +915,14 @@ coreDns:
     ##
     interval: ""
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -950,14 +950,14 @@ kubeDns:
     ##
     interval: ""
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -971,7 +971,7 @@ kubeDns:
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     dnsmasqRelabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -1023,14 +1023,14 @@ kubeEtcd:
     certFile: ""
     keyFile: ""
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -1076,14 +1076,14 @@ kubeScheduler:
     ## Name of the server to use when validating TLS certificate
     serverName: null
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -1122,14 +1122,14 @@ kubeProxy:
     ##
     https: false
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - action: keep
@@ -1146,14 +1146,14 @@ kubeStateMetrics:
     ##
     interval: ""
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -1190,7 +1190,7 @@ nodeExporter:
     ##
     scrapeTimeout: ""
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - sourceLabels: [__name__]
@@ -1199,7 +1199,7 @@ nodeExporter:
     #   replacement: $1
     #   action: drop
 
-    ## 	relabel configs to apply to samples before ingestion.
+    ##  relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -1358,14 +1358,14 @@ prometheusOperator:
     scrapeTimeout: ""
     selfMonitor: true
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -1663,14 +1663,14 @@ prometheus:
 
     bearerTokenFile:
 
-    ## 	metric relabel configs to apply to samples before ingestion.
+    ##  metric relabel configs to apply to samples before ingestion.
     ##
     metricRelabelings: []
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
 
-    # 	relabel configs to apply to samples before ingestion.
+    #   relabel configs to apply to samples before ingestion.
     ##
     relabelings: []
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -2086,7 +2086,7 @@ prometheus:
       runAsUser: 1000
       fsGroup: 2000
 
-    ## 	Priority class assigned to the Pods
+    ##  Priority class assigned to the Pods
     ##
     priorityClassName: ""
 

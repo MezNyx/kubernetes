@@ -461,7 +461,7 @@ kube-prometheus-stack:
       #   selector: {}
 
 
-      ##         The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name.	string	false
+      ##         The external URL the Alertmanager instances will be available under. This is necessary to generate correct URLs. This is necessary if Alertmanager is not served from root of a DNS name.  string  false
       ##
       externalUrl:
 
@@ -522,7 +522,7 @@ kube-prometheus-stack:
       #   effect: "NoSchedule"
 
       ## SecurityContext holds pod-level security attributes and common container settings.
-      ## This defaults to non root user with uid 1000 and gid 2000.        *v1.PodSecurityContext	false
+      ## This defaults to non root user with uid 1000 and gid 2000.        *v1.PodSecurityContext   false
       ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
       ##
       securityContext:
