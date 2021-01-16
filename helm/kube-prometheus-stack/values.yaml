@@ -94,14 +94,14 @@ kube-prometheus-stack:
       create: true
       pspEnabled: true
       pspAnnotations: {}
-	## Specify pod annotations
-	## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#apparmor
-	## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#seccomp
-	## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#sysctl
-	##
-	# seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
-	# seccomp.security.alpha.kubernetes.io/defaultProfileName: 'docker/default'
-	# apparmor.security.beta.kubernetes.io/defaultProfileName: 'runtime/default'
+  ## Specify pod annotations
+  ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#apparmor
+  ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#seccomp
+  ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#sysctl
+  ##
+  # seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+  # seccomp.security.alpha.kubernetes.io/defaultProfileName: 'docker/default'
+  # apparmor.security.beta.kubernetes.io/defaultProfileName: 'runtime/default'
 
     ## Reference to one or more secrets to be used when pulling images
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -146,17 +146,17 @@ kube-prometheus-stack:
     ##
     config:
       global:
-	resolve_timeout: 5m
+  resolve_timeout: 5m
       route:
-	group_by: ['job']
-	group_wait: 30s
-	group_interval: 5m
-	repeat_interval: 12h
-	receiver: 'null'
-	routes:
-	- match:
-	    alertname: Watchdog
-	  receiver: 'null'
+  group_by: ['job']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  receiver: 'null'
+  routes:
+  - match:
+      alertname: Watchdog
+    receiver: 'null'
       receivers:
       - name: 'null'
 
@@ -208,7 +208,7 @@ kube-prometheus-stack:
       ## Hosts must be provided if Ingress is enabled.
       ##
       hosts: []
-	# - alertmanager.domain.com
+  # - alertmanager.domain.com
 
       ## Paths to use for ingress rules - one path should match the alertmanagerSpec.routePrefix
       ##
@@ -262,11 +262,11 @@ kube-prometheus-stack:
       ## Separated secret for each per replica Ingress. Can be used together with cert-manager
       ##
       tlsSecretPerReplica:
-	enabled: false
-	## Final form of the secret for each per replica ingress is
-	## {{ tlsSecretPerReplica.prefix }}-{{ $replicaNumber }}
-	##
-	prefix: "alertmanager"
+  enabled: false
+  ## Final form of the secret for each per replica ingress is
+  ## {{ tlsSecretPerReplica.prefix }}-{{ $replicaNumber }}
+  ##
+  prefix: "alertmanager"
 
     ## Configuration for Alertmanager service
     ##
@@ -370,9 +370,9 @@ kube-prometheus-stack:
       ## Image of Alertmanager
       ##
       image:
-	repository: quay.io/prometheus/alertmanager
-	tag: v0.21.0
-	sha: ""
+  repository: quay.io/prometheus/alertmanager
+  tag: v0.21.0
+  sha: ""
 
       ## If true then the user will be responsible to provide a secret with alertmanager configuration
       ## So when true the config part will be ignored (including templateFiles) and the one in the secret will be used
@@ -526,10 +526,10 @@ kube-prometheus-stack:
       ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
       ##
       securityContext:
-	runAsGroup: 2000
-	runAsNonRoot: true
-	runAsUser: 1000
-	fsGroup: 2000
+  runAsGroup: 2000
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
 
       ## ListenLocal makes the Alertmanager server listen on loopback, so that it does not bind against the Pod IP.
       ## Note this is only for the Alertmanager UI, not the gossip communication.
@@ -591,8 +591,8 @@ kube-prometheus-stack:
       ## Annotations for Grafana Ingress
       ##
       annotations: {}
-	# kubernetes.io/ingress.class: nginx
-	# kubernetes.io/tls-acme: "true"
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
 
       ## Labels to be added to the Ingress
       ##
@@ -618,27 +618,27 @@ kube-prometheus-stack:
 
     sidecar:
       dashboards:
-	enabled: true
-	label: grafana_dashboard
+  enabled: true
+  label: grafana_dashboard
 
-	## Annotations for Grafana dashboard configmaps
-	##
-	annotations: {}
-	multicluster: false
+  ## Annotations for Grafana dashboard configmaps
+  ##
+  annotations: {}
+  multicluster: false
       datasources:
-	enabled: true
-	defaultDatasourceEnabled: true
+  enabled: true
+  defaultDatasourceEnabled: true
 
-	## Annotations for Grafana datasource configmaps
-	##
-	annotations: {}
+  ## Annotations for Grafana datasource configmaps
+  ##
+  annotations: {}
 
-	## Create datasource for each Pod of Prometheus StatefulSet;
-	## this uses headless service `prometheus-operated` which is
-	## created by Prometheus Operator
-	## ref: https://git.io/fjaBS
-	createPrometheusReplicasDatasources: false
-	label: grafana_datasource
+  ## Create datasource for each Pod of Prometheus StatefulSet;
+  ## this uses headless service `prometheus-operated` which is
+  ## created by Prometheus Operator
+  ## ref: https://git.io/fjaBS
+  createPrometheusReplicasDatasources: false
+  label: grafana_datasource
 
     extraConfigmapMounts: []
     # - name: certs-configmap
@@ -650,13 +650,13 @@ kube-prometheus-stack:
     ## ref: http://docs.grafana.org/administration/provisioning/#datasources
     additionalDataSources:
       - name: Loki
-	type: loki
-	url: http://k8s-loki.monitoring.svc.cluster.local:3100
-	access: proxy
-	isDefault: false
-	editable: false
-	orgid: 1
-	version: 1
+  type: loki
+  url: http://k8s-loki.monitoring.svc.cluster.local:3100
+  access: proxy
+  isDefault: false
+  editable: false
+  orgid: 1
+  version: 1
     # - name: prometheus-sample
     #   access: proxy
     #   basicAuth: true
@@ -730,9 +730,9 @@ kube-prometheus-stack:
       interval: ""
       jobLabel: component
       selector:
-	matchLabels:
-	  component: apiserver
-	  provider: kubernetes
+  matchLabels:
+    component: apiserver
+    provider: kubernetes
 
       ## 	metric relabel configs to apply to samples before ingestion.
       ##
@@ -803,8 +803,8 @@ kube-prometheus-stack:
       #   metrics_path is required to match upstream rules and charts
       ##
       cAdvisorRelabelings:
-	- sourceLabels: [__metrics_path__]
-	  targetLabel: metrics_path
+  - sourceLabels: [__metrics_path__]
+    targetLabel: metrics_path
       # - sourceLabels: [__meta_kubernetes_pod_node_name]
       #   separator: ;
       #   regex: ^(.*)$
@@ -813,8 +813,8 @@ kube-prometheus-stack:
       #   action: replace
 
       probesRelabelings:
-	- sourceLabels: [__metrics_path__]
-	  targetLabel: metrics_path
+  - sourceLabels: [__metrics_path__]
+    targetLabel: metrics_path
       # - sourceLabels: [__meta_kubernetes_pod_node_name]
       #   separator: ;
       #   regex: ^(.*)$
@@ -823,8 +823,8 @@ kube-prometheus-stack:
       #   action: replace
 
       resourceRelabelings:
-	- sourceLabels: [__metrics_path__]
-	  targetLabel: metrics_path
+  - sourceLabels: [__metrics_path__]
+    targetLabel: metrics_path
       # - sourceLabels: [__meta_kubernetes_pod_node_name]
       #   separator: ;
       #   regex: ^(.*)$
@@ -848,8 +848,8 @@ kube-prometheus-stack:
       #   metrics_path is required to match upstream rules and charts
       ##
       relabelings:
-	- sourceLabels: [__metrics_path__]
-	  targetLabel: metrics_path
+  - sourceLabels: [__metrics_path__]
+    targetLabel: metrics_path
       # - sourceLabels: [__meta_kubernetes_pod_node_name]
       #   separator: ;
       #   regex: ^(.*)$
@@ -947,11 +947,11 @@ kube-prometheus-stack:
     enabled: false
     service:
       dnsmasq:
-	port: 10054
-	targetPort: 10054
+  port: 10054
+  targetPort: 10054
       skydns:
-	port: 10055
-	targetPort: 10055
+  port: 10055
+  targetPort: 10055
       # selector:
       #   k8s-app: kube-dns
     serviceMonitor:
@@ -1251,26 +1251,26 @@ kube-prometheus-stack:
       ## certs ahead of time if you wish.
       ##
       patch:
-	enabled: true
-	image:
-	  repository: jettech/kube-webhook-certgen
-	  tag: v1.5.0
-	  sha: ""
-	  pullPolicy: IfNotPresent
-	resources: {}
-	## Provide a priority class name to the webhook patching job
-	##
-	priorityClassName: ""
-	podAnnotations: {}
-	nodeSelector: {}
-	affinity: {}
-	tolerations: []
+  enabled: true
+  image:
+    repository: jettech/kube-webhook-certgen
+    tag: v1.5.0
+    sha: ""
+    pullPolicy: IfNotPresent
+  resources: {}
+  ## Provide a priority class name to the webhook patching job
+  ##
+  priorityClassName: ""
+  podAnnotations: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
       # Use certmanager to generate webhook certs
       certManager:
-	enabled: false
-	# issuerRef:
-	#   name: "issuer"
-	#   kind: "ClusterIssuer"
+  enabled: false
+  # issuerRef:
+  #   name: "issuer"
+  #   kind: "ClusterIssuer"
 
     ## Namespaces to scope the interaction of the Prometheus Operator and the apiserver (allow list).
     ## This is mutually exclusive with denyNamespaces. Setting this to an empty object will disable the configuration
@@ -1567,7 +1567,7 @@ kube-prometheus-stack:
       ## Hosts must be provided if Ingress is enabled.
       ##
       hosts: []
-	# - thanos-gateway.domain.com
+  # - thanos-gateway.domain.com
 
       ## Paths to use for ingress rules
       ##
@@ -1608,9 +1608,9 @@ kube-prometheus-stack:
       ## Secret must be manually created in the namespace
       ##
       tls: []
-	# - secretName: prometheus-general-tls
-	#   hosts:
-	#     - prometheus.example.com
+  # - secretName: prometheus-general-tls
+  #   hosts:
+  #     - prometheus.example.com
 
     ## Configuration for creating an Ingress that will map to each Prometheus replica service
     ## prometheus.servicePerReplica must be enabled
@@ -1646,11 +1646,11 @@ kube-prometheus-stack:
       ## Separated secret for each per replica Ingress. Can be used together with cert-manager
       ##
       tlsSecretPerReplica:
-	enabled: false
-	## Final form of the secret for each per replica ingress is
-	## {{ tlsSecretPerReplica.prefix }}-{{ $replicaNumber }}
-	##
-	prefix: "prometheus"
+  enabled: false
+  ## Final form of the secret for each per replica ingress is
+  ## {{ tlsSecretPerReplica.prefix }}-{{ $replicaNumber }}
+  ##
+  prefix: "prometheus"
 
     ## Configure additional options for default pod security policy for Prometheus
     ## ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/
@@ -1728,9 +1728,9 @@ kube-prometheus-stack:
       ## Image of Prometheus.
       ##
       image:
-	repository: quay.io/prometheus/prometheus
-	tag: v2.22.1
-	sha: ""
+  repository: quay.io/prometheus/prometheus
+  tag: v2.22.1
+  sha: ""
 
       ## Tolerations for use with node taints
       ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
@@ -2048,9 +2048,9 @@ kube-prometheus-stack:
       ## Expected values are the secret name and key
       ## Cannot be used with additionalScrapeConfigs
       additionalScrapeConfigsSecret: {}
-	# enabled: false
-	# name:
-	# key:
+  # enabled: false
+  # name:
+  # key:
 
       ## additionalPrometheusSecretsAnnotations allows to add annotations to the kubernetes secret. This can be useful
       ## when deploying via spinnaker to disable versioning on the secret, strategy.spinnaker.io/versioned: 'false'
@@ -2090,10 +2090,10 @@ kube-prometheus-stack:
       ## https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md
       ##
       securityContext:
-	runAsGroup: 2000
-	runAsNonRoot: true
-	runAsUser: 1000
-	fsGroup: 2000
+  runAsGroup: 2000
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 2000
 
       ## 	Priority class assigned to the Pods
       ##
@@ -2184,64 +2184,64 @@ kube-prometheus-stack:
       ## Namespaces from which services are selected
       ##
       # namespaceSelector:
-	## Match any namespace
-	##
-	# any: false
+  ## Match any namespace
+  ##
+  # any: false
 
-	## Explicit list of namespace names to select
-	##
-	# matchNames: []
+  ## Explicit list of namespace names to select
+  ##
+  # matchNames: []
 
       ## Endpoints of the selected service to be monitored
       ##
       # endpoints: []
-	## Name of the endpoint's service port
-	## Mutually exclusive with targetPort
-	# - port: ""
+  ## Name of the endpoint's service port
+  ## Mutually exclusive with targetPort
+  # - port: ""
 
-	## Name or number of the endpoint's target port
-	## Mutually exclusive with port
-	# - targetPort: ""
+  ## Name or number of the endpoint's target port
+  ## Mutually exclusive with port
+  # - targetPort: ""
 
-	## File containing bearer token to be used when scraping targets
-	##
-	#   bearerTokenFile: ""
+  ## File containing bearer token to be used when scraping targets
+  ##
+  #   bearerTokenFile: ""
 
-	## Interval at which metrics should be scraped
-	##
-	#   interval: 30s
+  ## Interval at which metrics should be scraped
+  ##
+  #   interval: 30s
 
-	## HTTP path to scrape for metrics
-	##
-	#   path: /metrics
+  ## HTTP path to scrape for metrics
+  ##
+  #   path: /metrics
 
-	## HTTP scheme to use for scraping
-	##
-	#   scheme: http
+  ## HTTP scheme to use for scraping
+  ##
+  #   scheme: http
 
-	## TLS configuration to use when scraping the endpoint
-	##
-	#   tlsConfig:
+  ## TLS configuration to use when scraping the endpoint
+  ##
+  #   tlsConfig:
 
-	    ## Path to the CA file
-	    ##
-	    # caFile: ""
+      ## Path to the CA file
+      ##
+      # caFile: ""
 
-	    ## Path to client certificate file
-	    ##
-	    # certFile: ""
+      ## Path to client certificate file
+      ##
+      # certFile: ""
 
-	    ## Skip certificate verification
-	    ##
-	    # insecureSkipVerify: false
+      ## Skip certificate verification
+      ##
+      # insecureSkipVerify: false
 
-	    ## Path to client key file
-	    ##
-	    # keyFile: ""
+      ## Path to client key file
+      ##
+      # keyFile: ""
 
-	    ## Server name used to verify host name
-	    ##
-	    # serverName: ""
+      ## Server name used to verify host name
+      ##
+      # serverName: ""
 
     additionalPodMonitors: []
     ## Name of the PodMonitor to create
@@ -2273,13 +2273,13 @@ kube-prometheus-stack:
       ## Namespaces from which pods are selected
       ##
       # namespaceSelector:
-	## Match any namespace
-	##
-	# any: false
+  ## Match any namespace
+  ##
+  # any: false
 
-	## Explicit list of namespace names to select
-	##
-	# matchNames: []
+  ## Explicit list of namespace names to select
+  ##
+  # matchNames: []
 
       ## Endpoints of the selected pods to be monitored
       ## https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#podmetricsendpoint
