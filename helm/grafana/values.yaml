@@ -394,6 +394,11 @@ grafana:
         type: loki
         url: http://k8s-loki.monitoring.svc.cluster.local:3100
         access: proxy
+        isDefault: false
+      - name: Prometheus
+        type: prometheus
+        url: http://k8s-prometheus-server.monitoring.svc.cluster.local:80
+        access: proxy
         isDefault: true
 
   ## Configure notifiers
