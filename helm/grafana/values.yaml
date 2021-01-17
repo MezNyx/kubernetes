@@ -444,8 +444,9 @@ grafana:
   ## dashboards per provider, use provider name as key.
   ##
   dashboards:
-    prometheus-node-exporter:
-      file: dashboards/prometheus-node-exporter-full.json 
+    prometheus:
+      prometheus-node-exporter-full:
+        file: dashboards/prometheus-node-exporter-full.json 
 
   ## Reference to external ConfigMap per provider. Use provider name as key and ConfigMap name as value.
   ## A provider dashboards must be defined either by external ConfigMaps or in values.yaml, not in both.
