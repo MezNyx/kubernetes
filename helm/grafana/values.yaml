@@ -435,7 +435,7 @@ grafana:
         disableDeletion: true
         editable: false
         options:
-          path: /var/lib/grafana/dashboards/prometheus
+          path: /var/lib/grafana/dashboards
 
   ## Configure grafana dashboard to import
   ## NOTE: To use dashboards you must also enable/configure dashboardProviders
@@ -444,9 +444,8 @@ grafana:
   ## dashboards per provider, use provider name as key.
   ##
   dashboards:
-    kubernetes:
-      prometheus-node-exporter:
-        file: dashboards/prometheus-node-exporter-full.json 
+    prometheus-node-exporter:
+      file: dashboards/prometheus-node-exporter-full.json 
 
   ## Reference to external ConfigMap per provider. Use provider name as key and ConfigMap name as value.
   ## A provider dashboards must be defined either by external ConfigMaps or in values.yaml, not in both.
