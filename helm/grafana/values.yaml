@@ -447,7 +447,7 @@ grafana:
   dashboards:
     prometheus:
       node_exporter_full:
-        file: dashboards/prometheus/node_exporter_full.json 
+        gnetId: 1860
 
   ## Reference to external ConfigMap per provider. Use provider name as key and ConfigMap name as value.
   ## A provider dashboards must be defined either by external ConfigMaps or in values.yaml, not in both.
