@@ -434,6 +434,7 @@ grafana:
         type: file
         disableDeletion: true
         editable: false
+        allowUpdates: false
         options:
           path: /var/lib/grafana/dashboards/prometheus
 
@@ -446,7 +447,7 @@ grafana:
   dashboards:
     prometheus:
       node-exporter-full:
-        file: dashboards/prometheus-node-exporter-full.json 
+        file: dashboards/prometheus/node_exporter_full.json 
 
   ## Reference to external ConfigMap per provider. Use provider name as key and ConfigMap name as value.
   ## A provider dashboards must be defined either by external ConfigMaps or in values.yaml, not in both.
