@@ -446,7 +446,7 @@ grafana:
   ##
   dashboards:
     prometheus:
-      node-exporter-full:
+      node_exporter_full:
         file: dashboards/prometheus/node_exporter_full.json 
 
   ## Reference to external ConfigMap per provider. Use provider name as key and ConfigMap name as value.
