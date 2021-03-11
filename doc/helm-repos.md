@@ -9,6 +9,7 @@ incubator           	https://charts.helm.sh/incubator
 bitnami             	https://charts.bitnami.com/bitnami
 argo                	https://argoproj.github.io/argo-helm
 prometheus-community	https://prometheus-community.github.io/helm-charts
+open-telemetry          https://open-telemetry.github.io/opentelemetry-helm-charts
 
 ### Install
 
