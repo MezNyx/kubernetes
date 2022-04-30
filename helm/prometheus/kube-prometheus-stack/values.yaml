@@ -1712,7 +1712,7 @@ prometheusOperator:
     sha: ""
     pullPolicy: IfNotPresent
 
-  ## Prometheus image to use for prometheuses managed by the operator
+  ## Prometheus image to use for prometheis managed by the operator
   ##
   # prometheusDefaultBaseImage: quay.io/prometheus/prometheus
 
