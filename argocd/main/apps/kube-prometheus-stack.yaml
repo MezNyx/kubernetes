@@ -6,9 +6,6 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  syncPolicy:
-    syncOptions:
-      - Replace=true
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
@@ -25,3 +22,5 @@ spec:
     automated:
       selfHeal: true
       prune: true
+    syncOptions:
+      - Replace=true
