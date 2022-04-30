@@ -1712,7 +1712,7 @@ prometheusOperator:
     sha: ""
     pullPolicy: IfNotPresent
 
-  ## Prometheus image to use for prometheis managed by the operator
+  ## Prometheus image to use for prometheuses managed by the operator
   ##
   # prometheusDefaultBaseImage: quay.io/prometheus/prometheus
 
@@ -2432,13 +2432,12 @@ prometheus:
           password:
             name: prometheus-remotewrite-credentials
             key: password
-
     # - url: http://remote1/push
     ## additionalRemoteWrite is appended to remoteWrite
     additionalRemoteWrite: []
 
     ## Enable/Disable Grafana dashboards provisioning for prometheus remote write feature
-    remoteWriteDashboards: false
+    remoteWriteDashboards: true
 
     ## Resource limits & requests
     ##

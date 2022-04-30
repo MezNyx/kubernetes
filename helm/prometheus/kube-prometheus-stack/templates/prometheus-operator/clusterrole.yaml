@@ -13,9 +13,9 @@ rules:
   - alertmanagers
   - alertmanagers/finalizers
   - alertmanagerconfigs
-  - prometheis
-  - prometheis/status
-  - prometheis/finalizers
+  - prometheuses
+  - prometheuses/status
+  - prometheuses/finalizers
   - thanosrulers
   - thanosrulers/finalizers
   - servicemonitors
