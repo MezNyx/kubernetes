@@ -4,40 +4,29 @@ kind: Deployment
 metadata:
   name: {{ template "argo-cd.server.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}
-    helm.sh/chart: {{ include "argo-cd.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.server.name }}
-    app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
+    {{- include "argo-cd.labels" (dict "context" . "component" .Values.server.name "name" .Values.server.name) | nindent 4 }}
+    app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.server.image.tag | quote }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "argo-cd.selectorLabels" (dict "context" . "name" .Values.server.name) | nindent 6 }}
   revisionHistoryLimit: 5
   {{- if (ne .Values.server.autoscaling.enabled true) }}
   replicas: {{ .Values.server.replicas }}
   {{- end }}
   template:
     metadata:
-      {{- if .Values.server.podAnnotations }}
+      {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.server.podAnnotations) }}
       annotations:
-      {{- range $key, $value := .Values.server.podAnnotations }}
+        {{- range $key, $value := . }}
         {{ $key }}: {{ $value | quote }}
-      {{- end }}
+        {{- end }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.server.name }}
-        helm.sh/chart: {{ include "argo-cd.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/part-of: argocd
-        app.kubernetes.io/component: {{ .Values.server.name }}
-        app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.server.image.tag | quote }}
-        {{- if .Values.server.podLabels }}
-{{- toYaml .Values.server.podLabels | nindent 8 }}
+        {{- include "argo-cd.labels" (dict "context" . "component" .Values.server.name "name" .Values.server.name) | nindent 8 }}
+        app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.server.image.tag | quote }}
+        {{- with (mergeOverwrite (deepCopy .Values.global.podLabels) .Values.server.podLabels) }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
@@ -49,12 +38,14 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Values.server.name }}
-        image: {{ default .Values.global.image.repository .Values.server.image.repository }}:{{ default .Values.global.image.tag .Values.server.image.tag }}
+        image: {{ default .Values.global.image.repository .Values.server.image.repository }}:{{ default (include "argo-cd.defaultTag" .) .Values.server.image.tag }}
         imagePullPolicy: {{ default .Values.global.image.imagePullPolicy .Values.server.image.imagePullPolicy }}
         command:
         - argocd-server
+        {{ if .Values.server.staticAssets.enabled }}
         - --staticassets
         - /shared/app
+        {{ end }}
         - --repo-server
         - {{ template "argo-cd.repoServer.fullname" . }}:{{ .Values.repoServer.service.port }}
         {{- if .Values.dex.enabled }}
@@ -68,6 +59,9 @@ spec:
         {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
+        {{- else if and .Values.externalRedis.host .Values.externalRedis.port }}
+        - --redis
+        - {{ .Values.externalRedis.host }}:{{ .Values.externalRedis.port }}
         {{- end }}
         {{- with .Values.server.extraArgs }}
         {{- . | toYaml | nindent 8 }}
@@ -75,22 +69,45 @@ spec:
         {{- if .Values.server.containerSecurityContext }}
         securityContext: {{- toYaml .Values.server.containerSecurityContext | nindent 10 }}
         {{- end }}
-        {{- if .Values.server.env }}
+        {{- if or .Values.server.env .Values.externalRedis.password .Values.externalRedis.existingSecret }}
         env:
-{{- toYaml .Values.server.env | nindent 8 }}
+          {{- include "argo-cd.redisPasswordEnv" . | nindent 8 }}
+          {{- with .Values.server.env }}
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
+        {{- end }}
+        {{- with .Values.server.envFrom }}
+        envFrom: {{- toYaml . | nindent 8 }}
         {{- end }}
         volumeMounts:
         {{- if .Values.server.volumeMounts }}
 {{- toYaml .Values.server.volumeMounts | nindent 8}}
         {{- end }}
+        {{- if .Values.server.extensions.enabled }}
+        - name: extensions
+          mountPath: /tmp/extensions/
+        {{- end }}
         {{- if .Values.configs.knownHosts }}
         - mountPath: /app/config/ssh
           name: ssh-known-hosts
         {{- end }}
-        {{- if .Values.configs.tlsCerts }}
         - mountPath: /app/config/tls
           name: tls-certs
+        - mountPath: /app/config/server/tls
+          name: argocd-repo-server-tls
+        {{- if .Values.configs.styles }}
+        - mountPath: "/shared/app/custom/custom.styles.css"
+          subPath: "custom.styles.css"
+          name: custom-styles
         {{- end }}
+        {{- if .Values.server.containerSecurityContext.readOnlyRootFilesystem }}
+        - mountPath: /home/argocd/.aws
+          name: aws-config
+        {{- end }}
+        - mountPath: /home/argocd
+          name: plugins-home
+        - mountPath: /tmp
+          name: tmp-dir
         ports:
         - name: {{ .Values.server.name }}
           containerPort: {{ .Values.server.containerPort }}
@@ -119,10 +136,24 @@ spec:
           successThreshold: {{ .Values.server.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.server.readinessProbe.failureThreshold }}
         resources:
-{{- toYaml .Values.server.resources | nindent 10 }}
-    {{- if .Values.server.extraContainers }}
-{{- toYaml .Values.server.extraContainers | nindent 6 }}
-    {{- end }}
+          {{- toYaml .Values.server.resources | nindent 10 }}
+        {{- if .Values.server.lifecycle }}
+        lifecycle:
+          {{- toYaml .Values.server.lifecycle | nindent 10 }}
+        {{- end }}
+      {{- with .Values.server.extraContainers }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.server.extensions.enabled }}
+      - name: argocd-extensions
+        image: {{ .Values.server.extensions.image.repository }}:{{ .Values.server.extensions.image.tag }}
+        imagePullPolicy: {{ .Values.server.extensions.image.imagePullPolicy }}
+        volumeMounts:
+          - name: extensions
+            mountPath: /tmp/extensions/
+        resources:
+          {{- toYaml .Values.server.extensions.resources | nindent 10 }}
+      {{- end }}
     {{- if .Values.server.nodeSelector }}
       nodeSelector:
 {{- toYaml .Values.server.nodeSelector | nindent 8 }}
@@ -135,26 +166,65 @@ spec:
       affinity:
 {{- toYaml .Values.server.affinity | nindent 8 }}
     {{- end }}
+    {{- with .Values.server.topologySpreadConstraints }}
+      topologySpreadConstraints:
+      {{- range $constraint := . }}
+      - {{ toYaml $constraint | nindent 8 | trim }}
+        {{- if not $constraint.labelSelector }}
+        labelSelector:
+          matchLabels:
+            {{- include "argo-cd.selectorLabels" (dict "context" $ "name" $.Values.server.name) | nindent 12 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
       serviceAccountName: {{ template "argo-cd.serverServiceAccountName" . }}
-{{- with .Values.global.hostAliases }}
+      {{- with .Values.global.hostAliases }}
       hostAliases:
-{{ toYaml . | indent 6 }}
-{{- end }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
       volumes:
       {{- if .Values.server.volumes }}
 {{- toYaml .Values.server.volumes | nindent 6}}
       {{- end }}
+      {{- if .Values.server.extensions.enabled }}
+      - name: extensions
+        emptyDir: {}
+      {{- end }}
       - emptyDir: {}
-        name: static-files
+        name: tmp-dir
+      {{- if .Values.server.containerSecurityContext.readOnlyRootFilesystem }}
+      - emptyDir: {}
+        name: aws-config
+      {{- end }}
+      {{- if .Values.configs.styles }}
+      - configMap:
+          name: argocd-custom-styles
+        name: custom-styles
+      {{- end }}
       {{- if .Values.configs.knownHosts }}
       - configMap:
           name: argocd-ssh-known-hosts-cm
         name: ssh-known-hosts
       {{- end }}
-      {{- if .Values.configs.tlsCerts }}
       - configMap:
           name: argocd-tls-certs-cm
         name: tls-certs
+      - name: argocd-repo-server-tls
+        secret:
+          items:
+          - key: tls.crt
+            path: tls.crt
+          - key: tls.key
+            path: tls.key
+          - key: ca.crt
+            path: ca.crt
+          optional: true
+          secretName: argocd-repo-server-tls
+      - emptyDir: {}
+        name: plugins-home
+      {{- if .Values.server.initContainers }}
+      initContainers:
+      {{- toYaml .Values.server.initContainers | nindent 6 }}
       {{- end }}
 {{- if .Values.server.priorityClassName }}
       priorityClassName: {{ .Values.server.priorityClassName }}

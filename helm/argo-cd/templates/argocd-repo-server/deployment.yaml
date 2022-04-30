@@ -4,40 +4,29 @@ kind: Deployment
 metadata:
   name: {{ template "argo-cd.repoServer.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.repoServer.name }}
-    helm.sh/chart: {{ include "argo-cd.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/part-of: argocd
-    app.kubernetes.io/component: {{ .Values.repoServer.name }}
-    app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.repoServer.image.tag | quote }}
+    {{- include "argo-cd.labels" (dict "context" . "component" .Values.repoServer.name "name" .Values.repoServer.name) | nindent 4 }}
+    app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag | quote }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.repoServer.name }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "argo-cd.selectorLabels" (dict "context" . "name" .Values.repoServer.name) | nindent 6 }}
   revisionHistoryLimit: 5
   {{- if (ne .Values.repoServer.autoscaling.enabled true) }}
   replicas: {{ .Values.repoServer.replicas }}
   {{- end }}
   template:
     metadata:
-      {{- if .Values.repoServer.podAnnotations }}
+      {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.repoServer.podAnnotations) }}
       annotations:
-      {{- range $key, $value := .Values.repoServer.podAnnotations }}
+        {{- range $key, $value := . }}
         {{ $key }}: {{ $value | quote }}
-      {{- end }}
+        {{- end }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "argo-cd.name" . }}-{{ .Values.repoServer.name }}
-        helm.sh/chart: {{ include "argo-cd.chart" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app.kubernetes.io/managed-by: {{ .Release.Service }}
-        app.kubernetes.io/part-of: argocd
-        app.kubernetes.io/component: {{ .Values.repoServer.name }}
-        app.kubernetes.io/version: {{ default .Values.global.image.tag .Values.repoServer.image.tag | quote }}
-        {{- if .Values.repoServer.podLabels }}
-{{- toYaml .Values.repoServer.podLabels | nindent 8 }}
+        {{- include "argo-cd.labels" (dict "context" . "component" .Values.repoServer.name "name" .Values.repoServer.name) | nindent 8 }}
+        app.kubernetes.io/version: {{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag | quote }}
+        {{- with (mergeOverwrite (deepCopy .Values.global.podLabels) .Values.repoServer.podLabels) }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
       {{- with .Values.global.imagePullSecrets }}
@@ -49,14 +38,18 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Values.repoServer.name }}
-        image: {{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default .Values.global.image.tag .Values.repoServer.image.tag }}
+        image: {{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}
         imagePullPolicy: {{ default .Values.global.image.imagePullPolicy .Values.repoServer.image.imagePullPolicy }}
         command:
-        - uid_entrypoint.sh
+        - entrypoint.sh
+        args:
         - argocd-repo-server
         {{- if or (and .Values.redis.enabled (not $redisHa.enabled)) (and $redisHa.enabled $redisHa.haproxy.enabled) }}
         - --redis
         - {{ template "argo-cd.redis.fullname" . }}:{{ .Values.redis.servicePort }}
+        {{- else if and .Values.externalRedis.host .Values.externalRedis.port }}
+        - --redis
+        - {{ .Values.externalRedis.host }}:{{ .Values.externalRedis.port }}
         {{- end }}
         - --logformat
         - {{ .Values.repoServer.logFormat }}
@@ -68,32 +61,46 @@ spec:
         {{- if .Values.repoServer.containerSecurityContext }}
         securityContext: {{- toYaml .Values.repoServer.containerSecurityContext | nindent 10 }}
         {{- end }}
-{{- if or (.Values.repoServer.env) (.Values.openshift.enabled) }}
         env:
-{{- if .Values.repoServer.env }}
-{{- toYaml .Values.repoServer.env | nindent 8 }}
-{{- end }}
-{{- if .Values.openshift.enabled }}
+        - name: HELM_CACHE_HOME
+          value: /helm-working-dir
+        - name: HELM_CONFIG_HOME
+          value: /helm-working-dir
+        - name: HELM_DATA_HOME
+          value: /helm-working-dir
+          {{- include "argo-cd.redisPasswordEnv" . | nindent 8 }}
+          {{- with .Values.repoServer.env }}
+          {{- toYaml . | nindent 8 }}
+          {{- end }}
+        {{- if .Values.openshift.enabled }}
         - name: USER_NAME
           value: argocd
-{{- end }}
-{{- end }}
+        {{- end }}
+        {{- with .Values.repoServer.envFrom }}
+        envFrom: {{- toYaml . | nindent 8 }}
+        {{- end }}
         volumeMounts:
         {{- if .Values.repoServer.volumeMounts }}
-{{- toYaml .Values.repoServer.volumeMounts | nindent 8}}
+          {{- toYaml .Values.repoServer.volumeMounts | nindent 8 }}
         {{- end }}
-        {{- if .Values.openshift.enabled }}
+        - mountPath: /app/config/gpg/source
+          name: gpg-keys
         - mountPath: /app/config/gpg/keys
           name: gpg-keyring
-        {{- end }}
         {{- if .Values.configs.knownHosts }}
         - mountPath: /app/config/ssh
           name: ssh-known-hosts
         {{- end }}
-        {{- if .Values.configs.tlsCerts }}
         - mountPath: /app/config/tls
           name: tls-certs
-        {{- end }}
+        - mountPath: /app/config/reposerver/tls
+          name: argocd-repo-server-tls
+        - mountPath: /tmp
+          name: tmp-dir
+        - mountPath: /helm-working-dir
+          name: helm-working-dir
+        - mountPath: /home/argocd/cmp-server/plugins
+          name: plugins
         ports:
         - name: repo-server
           containerPort: {{ .Values.repoServer.containerPort }}
@@ -120,7 +127,10 @@ spec:
           successThreshold: {{ .Values.repoServer.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.repoServer.readinessProbe.failureThreshold }}
         resources:
-{{- toYaml .Values.repoServer.resources | nindent 10 }}
+          {{- toYaml .Values.repoServer.resources | nindent 10 }}
+      {{- with .Values.repoServer.extraContainers }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
     {{- if .Values.repoServer.nodeSelector }}
       nodeSelector:
 {{- toYaml .Values.repoServer.nodeSelector | nindent 8 }}
@@ -133,32 +143,77 @@ spec:
       affinity:
 {{- toYaml .Values.repoServer.affinity | nindent 8 }}
     {{- end }}
+    {{- with .Values.repoServer.topologySpreadConstraints }}
+      topologySpreadConstraints:
+      {{- range $constraint := . }}
+      - {{ toYaml $constraint | nindent 8 | trim }}
+        {{- if not $constraint.labelSelector }}
+        labelSelector:
+          matchLabels:
+            {{- include "argo-cd.selectorLabels" (dict "context" $ "name" $.Values.repoServer.name) | nindent 12 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
       serviceAccountName: {{ template "argo-cd.repoServerServiceAccountName" . }}
-{{- with .Values.global.hostAliases }}
+      {{- with .Values.global.hostAliases }}
       hostAliases:
-{{ toYaml . | indent 6 }}
-{{- end }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
       volumes:
       {{- if .Values.repoServer.volumes }}
-{{- toYaml .Values.repoServer.volumes | nindent 6}}
+        {{- toYaml .Values.repoServer.volumes | nindent 6 }}
       {{- end }}
-      {{- if .Values.openshift.enabled }}
+      - name: gpg-keys
+        configMap:
+          name: argocd-gpg-keys-cm
       - emptyDir: {}
         name: gpg-keyring
-      {{- end }}
       {{- if .Values.configs.knownHosts }}
       - configMap:
           name: argocd-ssh-known-hosts-cm
         name: ssh-known-hosts
       {{- end }}
-      {{- if .Values.configs.tlsCerts }}
       - configMap:
           name: argocd-tls-certs-cm
         name: tls-certs
-      {{- end }}
-      {{- if .Values.repoServer.initContainers }}
+      - name: helm-working-dir
+        emptyDir: {}
+      - name: argocd-repo-server-tls
+        secret:
+          items:
+          - key: tls.crt
+            path: tls.crt
+          - key: tls.key
+            path: tls.key
+          - key: ca.crt
+            path: ca.crt
+          optional: true
+          secretName: argocd-repo-server-tls
+      - emptyDir: {}
+        name: tmp-dir
+      - emptyDir: {}
+        name: var-files
+      - emptyDir: {}
+        name: plugins
       initContainers:
-{{- toYaml .Values.repoServer.initContainers | nindent 6 }}
+      - command:
+        - cp
+        - -n
+        - /usr/local/bin/argocd
+        - /var/run/argocd/argocd-cmp-server
+        image: {{ default .Values.global.image.repository .Values.repoServer.image.repository }}:{{ default (include "argo-cd.defaultTag" .) .Values.repoServer.image.tag }}
+        imagePullPolicy: {{ default .Values.global.image.imagePullPolicy .Values.repoServer.image.imagePullPolicy }}
+        name: copyutil
+        resources:
+          {{- toYaml .Values.repoServer.copyutil.resources | nindent 10 }}
+        {{- if .Values.repoServer.containerSecurityContext }}
+        securityContext: {{- toYaml .Values.repoServer.containerSecurityContext | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /var/run/argocd
+          name: var-files
+      {{- if .Values.repoServer.initContainers }}
+      {{- toYaml .Values.repoServer.initContainers | nindent 6 }}
       {{- end }}
 {{- if .Values.repoServer.priorityClassName }}
       priorityClassName: {{ .Values.repoServer.priorityClassName }}

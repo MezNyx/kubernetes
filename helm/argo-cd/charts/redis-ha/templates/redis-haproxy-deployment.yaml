@@ -3,7 +3,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: {{ template "redis-ha.fullname" . }}-haproxy
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
 {{ include "labels.standard" . | indent 4 }}
 spec:
@@ -21,8 +21,12 @@ spec:
       labels:
         app: {{ template "redis-ha.name" . }}-haproxy
         release: {{ .Release.Name }}
+        revision: "{{ .Release.Revision }}"
+        {{- range $key, $value := .Values.haproxy.labels }}
+        {{ $key }}: {{ $value | toString }}
+        {{- end }}
       annotations:
-      {{- if .Values.haproxy.metrics.enabled }}
+      {{- if and (.Values.haproxy.metrics.enabled) (not .Values.haproxy.metrics.serviceMonitor.enabled)  }}
         prometheus.io/port: "{{ .Values.haproxy.metrics.port }}"
         prometheus.io/scrape: "true"
         prometheus.io/path: "{{ .Values.haproxy.metrics.scrapePath }}"
@@ -56,23 +60,19 @@ spec:
                 matchLabels:
                   app: {{ template "redis-ha.name" . }}-haproxy
                   release: {{ .Release.Name }}
+                  revision: "{{ .Release.Revision }}"
               topologyKey: kubernetes.io/hostname
     {{- else }}
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchLabels:
-                  app: {{ template "redis-ha.name" . }}-haproxy
-                  release: {{ .Release.Name }}
-              topologyKey: kubernetes.io/hostname
-    {{- end }}
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
               podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app:  {{ template "redis-ha.name" . }}-haproxy
+                    app: {{ template "redis-ha.name" . }}-haproxy
                     release: {{ .Release.Name }}
-                topologyKey: failure-domain.beta.kubernetes.io/zone
+                    revision: "{{ .Release.Revision }}"
+                topologyKey: kubernetes.io/hostname
+    {{- end }}
     {{- end }}
       initContainers:
       - name: config-init
@@ -84,18 +84,6 @@ spec:
         - sh
         args:
         - /readonly/haproxy_init.sh
-{{- if .Values.auth }}
-        env:
-        - name: AUTH
-          valueFrom:
-            secretKeyRef:
-            {{- if .Values.existingSecret }}
-              name: {{ .Values.existingSecret }}
-            {{- else }}
-              name: {{ template "redis-ha.fullname" . }}
-            {{- end }}
-              key: {{ .Values.authKey }}
-{{- end }}
         volumeMounts:
         - name: config-volume
           mountPath: /readonly
@@ -111,7 +99,38 @@ spec:
       - name: haproxy
         image: {{ .Values.haproxy.image.repository }}:{{ .Values.haproxy.image.tag }}
         imagePullPolicy: {{ .Values.haproxy.image.pullPolicy }}
+    {{- if or .Values.auth .Values.sentinel.auth}}
+        env:
+      {{- if .Values.auth }}
+        - name: AUTH
+          valueFrom:
+            secretKeyRef:
+            {{- if .Values.existingSecret }}
+              name: {{ .Values.existingSecret }}
+            {{- else }}
+              name: {{ template "redis-ha.fullname" . }}
+            {{- end }}
+              key: {{ .Values.authKey }}
+      {{- end }}
+      {{- if .Values.sentinel.auth }}
+        - name: SENTINELAUTH
+          valueFrom:
+            secretKeyRef:
+            {{- if .Values.sentinel.existingSecret }}
+              name: {{ .Values.sentinel.existingSecret }}
+            {{- else }}
+              name: {{ template "redis-ha.fullname" . }}-sentinel
+            {{- end }}
+              key: {{ .Values.sentinel.authKey }}
+      {{- end }}
+    {{- end }}
         livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8888
+          initialDelaySeconds: 5
+          periodSeconds: 3
+        readinessProbe:
           httpGet:
             path: /healthz
             port: 8888
@@ -135,6 +154,8 @@ spec:
           mountPath: /usr/local/etc/haproxy
         - name: shared-socket
           mountPath: /run/haproxy
+        lifecycle:
+{{ toYaml .Values.haproxy.lifecycle | indent 10 }}
 {{- if .Values.haproxy.priorityClassName }}
       priorityClassName: {{ .Values.haproxy.priorityClassName }}
 {{- end }}
@@ -143,9 +164,9 @@ spec:
         configMap:
           name: {{ template "redis-ha.fullname" . }}-configmap
       - name: shared-socket
-        emptyDir: 
+        emptyDir:
 {{ toYaml .Values.haproxy.emptyDir | indent 10 }}
       - name: data
-        emptyDir: 
+        emptyDir:
 {{ toYaml .Values.haproxy.emptyDir | indent 10 }}
 {{- end }}
