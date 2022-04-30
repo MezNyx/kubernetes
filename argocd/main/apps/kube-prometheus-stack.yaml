@@ -8,7 +8,7 @@ metadata:
 spec:
   syncPolicy:
     syncOptions:
-    - Replace=true
+      - Replace=true
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
