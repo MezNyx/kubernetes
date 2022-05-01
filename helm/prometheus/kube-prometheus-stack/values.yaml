@@ -33,7 +33,7 @@ commonLabels: {}
 defaultRules:
   create: true
   rules:
-    alertmanager: false
+    alertmanager: true
     etcd: true
     configReloaders: true
     general: true
@@ -129,7 +129,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  enabled: false
+  enabled: true
 
   ## Annotations for Alertmanager
   ##
@@ -647,7 +647,7 @@ alertmanager:
 ## Using default values from https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 ##
 grafana:
-  enabled: false
+  enabled: true
   namespaceOverride: ""
 
   ## ForceDeployDatasources Create datasource configmap even if grafana deployment has been disabled
@@ -2423,15 +2423,15 @@ prometheus:
 
     ## The remote_write spec configuration for Prometheus.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#remotewritespec
-    remoteWrite:
-      - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
-        basicAuth:
-          username:
-            name: prometheus-remotewrite-credentials
-            key: username
-          password:
-            name: prometheus-remotewrite-credentials
-            key: password
+    remoteWrite: []
+            #  - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
+            #        basicAuth:
+            #          username:
+            #            name: prometheus-remotewrite-credentials
+            #            key: username
+            #          password:
+            #            name: prometheus-remotewrite-credentials
+            #            key: password
     # - url: http://remote1/push
     ## additionalRemoteWrite is appended to remoteWrite
     additionalRemoteWrite: []
