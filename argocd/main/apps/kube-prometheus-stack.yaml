@@ -15,7 +15,7 @@ spec:
       releaseName: k8s
       valueFiles:
         - values.yaml
-    path: helm/prometheus/kube-prometheus-stack
+    path: helm/prometheus-community/kube-prometheus-stack
     repoURL: https://github.com/meznyx/kubernetes.git
     targetRevision: main
   syncPolicy:
