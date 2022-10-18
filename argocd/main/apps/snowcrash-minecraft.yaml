@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
+spec:
+  destination:
+    namespace: minecraft
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: minecraft/overlays/snowcrash
+    repoURL: https://github.com/meznyx/kubernetes.git
+    kustomize:
+      version: v3.5.4
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true

@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: minecraft
+  name: deployment
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minecraft
+    spec:
+      initContainers:
+      containers:
+      - env:
+        - name: SERVER_NAME
+          value: "snowcrash"
+        - name: SERVER_PORT
+          value: 19132
+        - name: SERVER_PORT_V6
+          value: 19133
+        - name: GAMEMODE
+          value: survival
+        - name: DIFFICULTY
+          value: normal
+        - name: LEVEL_TYPE
+          value: DEFAULT
+        - name: ALLOW_CHEATS
+          value: false
+        - name: MAX_PLAYERS 
+          value: 10
+        - name: ONLINE_MODE
+          value: true
+        - name: WHITE_LIST
+          value: 
+        - name: VIEW_DISTANCE
+          value: 32
+        - name: TICK_DISTANCE
+          value: 4
+        - name: PLAYER_IDLE_TIMEOUT
+          value: 30
+        - name: MAX_THREADS
+          value: 8
+        - name: LEVEL_NAME
+          value: "snowcrash"
+        - name: LEVEL_SEED
+          value: "th34f1ju34facjn5f871df312h"
+        - name: DEFAULT_PLAYER_PERMISSION_LEVEL
+          value: member
+        - name: TEXTUREPACK_REQUIRED
+          value: false
+        - name: SERVER_AUTHORITATIVE_MOVEMENT
+          value: server-auth
+        - name: PLAYER_MOVEMENT_SCORE_THRESHOLD
+          value: 20
+        - name: PLAYER_MOVEMENT_DISTANCE_THRESHOLD
+          value: 0.3
+        - name: PLAYER_MOVEMENT_DURATION_THRESHOLD_IN_MS
+          value: 500
+        - name: CORRECT_PLAYER_MOVEMENT
+          value: false
+        args:
+        - --noconsole
+        image: itzg/minecraft-bedrock-server
+        name: minecraft
+        resources:
+          requests:
+            memory: "3000Mi"
+            cpu: "250m"
+          limits:
+            memory: "3500Mi"
+            cpu: "1500m"
+        ports:
+        - containerPort: 25565
+          name: "minecraft"
+        stdin: false
+        volumeMounts:
+        - mountPath: /data
+          name: minecraft
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: minecraft
+  name: service
+spec:
+  ports:
+  - name: "minecraft"
+    port: 25565
+  type: ClusterIP
+  selector:
+    app: minecraft

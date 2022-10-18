@@ -1,0 +1,9 @@
+namePrefix: minecraft-
+
+resources:
+- minecraft-deployment.yml
+- minecraft-pvc.yaml
+
+commonLabels:
+  app: minecraft
+  role: game
